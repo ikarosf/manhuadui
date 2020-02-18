@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 import os
+import logging
 from urllib import parse
 import scrapy
 from manhuadui.settings import IMAGES_STORE
@@ -12,12 +13,12 @@ def get_full_img_urls(img_urls, chapterPath, domain='https://img01.eshanyao.com'
     full_img_urls = []
     for img_url in img_urls:
         if re.match(r'^https?:\/\/(images.dmzj.com|imgsmall.dmzj.com)', img_url, flags=re.IGNORECASE):
-            # full_img_urls.append('https://img01.eshanyao.com/showImage.php?url=' + parse.urlencode(img_url))
-            full_img_urls.append('https://img01.eshanyao.com/showImage.php?url=' + img_url)
+            full_img_urls.append('https://img01.eshanyao.com/showImage.php?url=' + parse.quote(img_url))
+            # full_img_urls.append('https://img01.eshanyao.com/showImage.php?url=' + img_url)
         elif re.match(r'^[a-z]\/', img_url, flags=re.IGNORECASE):
             full_img_urls.append(
-                # 'https://img01.eshanyao.com/showImage.php?url=' + parse.urlencode("https://images.dmzj.com/" + img_url))
-                'https://img01.eshanyao.com/showImage.php?url=' + "https://images.dmzj.com/" + img_url)
+                'https://img01.eshanyao.com/showImage.php?url=' + parse.quote("https://images.dmzj.com/" + img_url))
+                # 'https://img01.eshanyao.com/showImage.php?url=' + "https://images.dmzj.com/" + img_url)
         elif re.match(r'^(http:|https:|ftp:|^)\/\/', img_url, flags=re.IGNORECASE):
             full_img_urls.append(img_url)
         else:
@@ -36,6 +37,11 @@ class MhdcommonSpider(scrapy.Spider):
 
     def __init__(self, url=None, *args, **kwargs):
         super(MhdcommonSpider, self).__init__(*args, **kwargs)
+        logging.basicConfig(format='%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s',
+                            datefmt="%Y/%d/%m %H:%M:%S")
+        # import coloredlogs
+        # coloredlogs.install(level='INFO')
+
         if url is not None:
             self.start_urls = [url]
 
@@ -73,7 +79,7 @@ class MhdcommonSpider(scrapy.Spider):
                 item['link'] = img_url
                 item['image_type'] = image_type
                 item['path'] = path
-                print(path + '下载中')
+                logging.info(path + '加入下载')
                 yield item
             else:
-                print(path + '已存在')
+                logging.info(path + '已存在')

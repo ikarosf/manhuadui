@@ -6,7 +6,9 @@
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
 from scrapy import signals
-
+import random
+import base64
+import logging
 
 class ManhuaduiSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
@@ -103,8 +105,7 @@ class ManhuaduiDownloaderMiddleware(object):
         spider.logger.info('Spider opened: %s' % spider.name)
 
 
-import random
-import base64
+
 
 
 # from settings import PROXIES
@@ -143,7 +144,7 @@ class ProxyMiddleware(object):
             request.meta['proxy'] = "http://%s" % proxy['ip_port']
             encoded_user_pass = base64.b64encode(proxy['user_pass'].encode(encoding='utf-8'))
             request.headers['Proxy-Authorization'] = 'Basic ' + encoded_user_pass
-            print("**************ProxyMiddleware have pass************" + proxy['ip_port'])
+            logger.info("**************ProxyMiddleware have pass************" + proxy['ip_port'])
         else:
-            print(request.url + "**************ProxyMiddleware no pass************" + proxy['ip_port'])
+            logging.info(request.url + "**************ProxyMiddleware no pass************" + proxy['ip_port'])
             request.meta['proxy'] = "http://%s" % proxy['ip_port']

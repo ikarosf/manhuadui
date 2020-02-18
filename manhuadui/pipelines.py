@@ -4,11 +4,9 @@
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-import os
+import logging
 from scrapy import Request
-from scrapy.exceptions import DropItem
 from scrapy.pipelines.images import ImagesPipeline
-
 
 
 class ManhuaduiPipeline(object):
@@ -31,5 +29,7 @@ class ImagesPipiline(ImagesPipeline):
 
     def item_completed(self, results, item, info):
         # 图片下载完成后，返回结果result
-        print(results)
+        # print(results)
+        logging.warning("{下载成功" if results[0][0] else "下载失败")
+        logging.warning(results[0][1]['path'] + ' ' + results[0][1]['url'] + '}')
         return item

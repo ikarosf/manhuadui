@@ -50,4 +50,4 @@ def get_secret_url(text, mykey=key, myiv=iv):
 
 
 if __name__ == '__main__':
-    print(get_secret_url(mystr, key, iv))
+    logging.info(get_secret_url(mystr, key, iv))
